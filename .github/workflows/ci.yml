@@ -209,7 +209,7 @@ jobs:
 
   upload-release-assets:
     name: Upload Release Assets
-    needs: create-release
+    needs: [create-tag, create-release]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -228,8 +228,6 @@ jobs:
             artifact: ports-windows-x86_64
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.create-tag.outputs.new_tag }}
       
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
