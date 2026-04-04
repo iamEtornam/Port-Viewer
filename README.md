@@ -451,7 +451,6 @@ port-viewer/
 - [WINDOWS_SUPPORT.md](WINDOWS_SUPPORT.md) — Windows implementation details
 - [CONTRIBUTING.md](CONTRIBUTING.md) — How to contribute
 - [CHANGELOG.md](CHANGELOG.md) — Version history
-- [examples/usage.md](examples/usage.md) — More usage examples
 
 ---
 
@@ -492,4 +491,4 @@ See [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for:
 
 ---
 
-**Made with ⚡ and 🦀 by the port-viewer team**
+**Made with ⚡ and 🦀 by the Etornam**
