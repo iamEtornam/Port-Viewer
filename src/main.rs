@@ -5,6 +5,7 @@ mod clean;
 mod collector;
 mod detail;
 mod framework;
+mod platform;
 mod process;
 mod ps_view;
 mod renderer;

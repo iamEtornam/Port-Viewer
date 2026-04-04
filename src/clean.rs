@@ -1,12 +1,11 @@
 use anyhow::Result;
 use colored::Colorize;
 use std::io::{self, Write};
-use std::process::Stdio;
 use tabled::{settings::Style, Table, Tabled};
-use tokio::process::Command;
 use tokio::time::{sleep, Duration};
 
 use crate::collector;
+use crate::platform;
 use crate::process::ProcessStatus;
 
 #[derive(Tabled)]
@@ -117,35 +116,12 @@ pub async fn clean_orphans() -> Result<()> {
 }
 
 async fn kill_process_graceful(pid: u32) -> Result<()> {
-    // Send SIGTERM
-    Command::new("kill")
-        .arg("-TERM")
-        .arg(pid.to_string())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .status()
-        .await?;
+    platform::kill_process_signal(pid, "-TERM").await?;
 
-    // Wait 3 seconds
     sleep(Duration::from_secs(3)).await;
 
-    // Check if still alive
-    let check = Command::new("ps")
-        .args(["-p", &pid.to_string()])
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .status()
-        .await?;
-
-    if check.success() {
-        // Send SIGKILL
-        Command::new("kill")
-            .arg("-KILL")
-            .arg(pid.to_string())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .await?;
+    if platform::check_process_alive(pid).await? {
+        platform::kill_process_signal(pid, "-KILL").await?;
     }
 
     println!("  {} PID {}", "✓".green(), pid);

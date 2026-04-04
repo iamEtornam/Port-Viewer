@@ -43,7 +43,8 @@ pub async fn watch_ports(show_all: bool) -> Result<()> {
                     .unwrap_or("Unknown");
                 let project = entry
                     .process
-                    .project_name.as_deref()
+                    .project_name
+                    .as_deref()
                     .unwrap_or(&entry.process.name);
 
                 println!(

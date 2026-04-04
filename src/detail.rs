@@ -1,11 +1,10 @@
 use anyhow::{Context, Result};
 use colored::Colorize;
 use std::io::{self, Write};
-use std::process::Stdio;
-use tokio::process::Command;
 use tokio::time::{sleep, Duration};
 
 use crate::collector;
+use crate::platform;
 
 pub async fn show_port_detail(port: u16) -> Result<()> {
     let entries = collector::collect_all_data(true).await?;
@@ -107,37 +106,24 @@ pub async fn show_port_detail(port: u16) -> Result<()> {
 }
 
 async fn kill_process(pid: u32) -> Result<()> {
+    #[cfg(unix)]
     println!("{} PID {}...", "Sending SIGTERM to".yellow(), pid);
 
-    // Send SIGTERM
-    Command::new("kill")
-        .arg("-TERM")
-        .arg(pid.to_string())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .status()
-        .await?;
+    #[cfg(windows)]
+    println!("{} PID {}...", "Terminating".yellow(), pid);
 
-    // Wait 3 seconds
+    platform::kill_process_signal(pid, "-TERM").await?;
+
     sleep(Duration::from_secs(3)).await;
 
-    // Check if still alive
-    let check = Command::new("ps")
-        .args(["-p", &pid.to_string()])
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .status()
-        .await?;
-
-    if check.success() {
+    if platform::check_process_alive(pid).await? {
+        #[cfg(unix)]
         println!("{} Sending SIGKILL...", "Process still alive.".yellow());
-        Command::new("kill")
-            .arg("-KILL")
-            .arg(pid.to_string())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .await?;
+
+        #[cfg(windows)]
+        println!("{} Force killing...", "Process still alive.".yellow());
+
+        platform::kill_process_signal(pid, "-KILL").await?;
     }
 
     println!("{}", "✓ Process terminated.".green());
@@ -150,9 +136,7 @@ fn wrap_text(text: &str, width: usize) -> Vec<String> {
     let mut current_line = String::new();
 
     for word in words {
-        if current_line.len() + word.len() + 1 > width
-            && !current_line.is_empty()
-        {
+        if current_line.len() + word.len() + 1 > width && !current_line.is_empty() {
             lines.push(current_line.clone());
             current_line.clear();
         }

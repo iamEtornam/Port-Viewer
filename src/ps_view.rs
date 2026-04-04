@@ -1,12 +1,11 @@
 use anyhow::Result;
 use colored::Colorize;
 use std::collections::HashMap;
-use std::process::Stdio;
 use tabled::{settings::Style, Table, Tabled};
-use tokio::process::Command;
 use tokio::time::{sleep, Duration};
 
 use crate::collector;
+use crate::platform;
 use crate::process::ProcessInfo;
 
 #[derive(Tabled)]
@@ -134,49 +133,28 @@ async fn measure_cpu_usage(processes: &[&ProcessInfo]) -> Result<HashMap<u32, f6
         .collect::<Vec<_>>()
         .join(",");
 
-    // First sample
-    let sample1 = get_cpu_samples(&pid_list).await?;
+    #[cfg(unix)]
+    {
+        let sample1 = platform::get_cpu_sample(&pid_list).await?;
+        sleep(Duration::from_millis(200)).await;
+        let sample2 = platform::get_cpu_sample(&pid_list).await?;
 
-    // Wait 200ms
-    sleep(Duration::from_millis(200)).await;
-
-    // Second sample
-    let sample2 = get_cpu_samples(&pid_list).await?;
-
-    // Calculate CPU %
-    let mut cpu_map = HashMap::new();
-    for (pid, cpu1) in sample1 {
-        if let Some(cpu2) = sample2.get(&pid) {
-            let diff = cpu2 - cpu1;
-            let cpu_percent = (diff / 0.2).max(0.0);
-            cpu_map.insert(pid, cpu_percent);
-        }
-    }
-
-    Ok(cpu_map)
-}
-
-async fn get_cpu_samples(pid_list: &str) -> Result<HashMap<u32, f64>> {
-    let output = Command::new("ps")
-        .args(["-o", "pid,%cpu", "-p", pid_list])
-        .stdout(Stdio::piped())
-        .stderr(Stdio::null())
-        .output()
-        .await?;
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let mut map = HashMap::new();
-
-    for line in stdout.lines().skip(1) {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() >= 2 {
-            if let (Ok(pid), Ok(cpu)) = (parts[0].parse::<u32>(), parts[1].parse::<f64>()) {
-                map.insert(pid, cpu);
+        let mut cpu_map = HashMap::new();
+        for (pid, cpu1) in sample1 {
+            if let Some(cpu2) = sample2.get(&pid) {
+                let diff = cpu2 - cpu1;
+                let cpu_percent = (diff / 0.2).max(0.0);
+                cpu_map.insert(pid, cpu_percent);
             }
         }
+
+        Ok(cpu_map)
     }
 
-    Ok(map)
+    #[cfg(windows)]
+    {
+        platform::get_cpu_sample(&pid_list).await
+    }
 }
 
 fn summarize_command(cmd: &str) -> String {

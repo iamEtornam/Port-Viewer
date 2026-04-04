@@ -6,10 +6,19 @@ Thank you for your interest in contributing to port-viewer! This document provid
 
 ### Prerequisites
 
-- Rust 1.75+ (2021 edition)
-- `lsof` and `ps` commands (standard on macOS and Linux)
+**All Platforms:**
+- Rust 1.70+ (2021 edition)
 - Docker (optional, for Docker integration)
 - Git (optional, for branch detection)
+
+**Unix (macOS/Linux):**
+- `lsof` — Pre-installed on most systems
+- `ps` — Pre-installed on most systems
+
+**Windows:**
+- `netstat` — Built into Windows
+- `tasklist` — Built into Windows
+- `taskkill` — Built into Windows
 
 ### Building from Source
 
@@ -37,6 +46,10 @@ The project follows a modular structure:
 
 - `main.rs` — CLI entrypoint and argument parsing
 - `collector.rs` — Async data collection pipeline
+- `platform/` — Platform-specific implementations
+  - `mod.rs` — Platform selection (Unix vs Windows)
+  - `unix.rs` — macOS/Linux implementation
+  - `windows.rs` — Windows implementation
 - `process.rs` — Core data structures
 - `framework.rs` — Framework detection logic
 - `renderer.rs` — Table rendering and output formatting
