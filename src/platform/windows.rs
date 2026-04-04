@@ -86,7 +86,8 @@ pub async fn get_process_cmdline(pid: u32) -> Result<String> {
 
     let sys_pid = Pid::from_u32(pid);
     if let Some(process) = sys.process(sys_pid) {
-        let cmdline = process.cmd()
+        let cmdline = process
+            .cmd()
             .iter()
             .map(|s| s.to_string_lossy().to_string())
             .collect::<Vec<String>>()
