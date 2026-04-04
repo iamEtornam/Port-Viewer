@@ -1,0 +1,36 @@
+[package]
+name = "port-viewer"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "A beautiful, blazing-fast CLI tool to inspect and manage processes listening on your machine's ports"
+license = "MIT"
+repository = "https://github.com/yourusername/port-viewer"
+
+[[bin]]
+name = "ports"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "cargo"] }
+crossterm = "0.27"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.36", features = ["full"] }
+which = "6.0"
+chrono = "0.4"
+tabled = "0.15"
+anyhow = "1.0"
+thiserror = "1.0"
+colored = "2.1"
+regex = "1.10"
+indexmap = "2.2"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
