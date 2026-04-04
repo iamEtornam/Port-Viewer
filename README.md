@@ -1,6 +1,6 @@
 # 🚢 port-viewer
 
-[![Build Status](https://github.com/yourusername/port-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/port-viewer/actions)
+[![Build Status](https://github.com/iamEtornam/port-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/iamEtornam/port-viewer/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-1.70%2B-blue.svg)](https://www.rust-lang.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
@@ -46,22 +46,22 @@
 
 #### Pre-built Binaries (Recommended)
 
-Download the latest release for your platform from the [Releases](https://github.com/your-username/port-viewer/releases) page:
+Download the latest release for your platform from the [Releases](https://github.com/iamEtornam/port-viewer/releases) page:
 
 **macOS:**
 ```bash
 # Intel
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-macos-x86_64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-x86_64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 
 # Apple Silicon
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-macos-aarch64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-aarch64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
 **Linux:**
 ```bash
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-linux-x86_64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-linux-x86_64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
@@ -75,7 +75,7 @@ sudo mv ports /usr/local/bin/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/port-viewer
+git clone https://github.com/iamEtornam/port-viewer
 cd port-viewer
 
 # Build release binary
@@ -403,7 +403,7 @@ cargo build --release --target aarch64-apple-darwin
 ### Getting Help
 
 1. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) (if available)
-2. Search existing [GitHub Issues](https://github.com/your-username/port-viewer/issues)
+2. Search existing [GitHub Issues](https://github.com/iamEtornam/port-viewer/issues)
 3. Open a new issue with:
    - Your OS and version
    - Output of `ports --version`
