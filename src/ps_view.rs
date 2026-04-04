@@ -2,6 +2,7 @@ use anyhow::Result;
 use colored::Colorize;
 use std::collections::HashMap;
 use tabled::{settings::Style, Table, Tabled};
+#[cfg(unix)]
 use tokio::time::{sleep, Duration};
 
 use crate::collector;

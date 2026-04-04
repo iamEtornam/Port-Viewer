@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use std::collections::HashMap;
+use std::process::Stdio;
 use sysinfo::{Pid, ProcessStatus as SysProcessStatus, ProcessesToUpdate, System};
 
 use crate::process::ProcessStatus;
@@ -38,7 +39,7 @@ pub async fn collect_listening_ports() -> Result<Vec<(u32, u16, String)>> {
 
 pub async fn collect_process_info_batch(pids: &[u32]) -> Result<HashMap<u32, ProcessInfoData>> {
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let mut map = HashMap::new();
 
@@ -63,7 +64,7 @@ pub async fn collect_process_info_batch(pids: &[u32]) -> Result<HashMap<u32, Pro
 
 pub async fn collect_process_cwds(pids: &[u32]) -> Result<HashMap<u32, String>> {
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let mut map = HashMap::new();
 
@@ -81,11 +82,16 @@ pub async fn collect_process_cwds(pids: &[u32]) -> Result<HashMap<u32, String>> 
 
 pub async fn get_process_cmdline(pid: u32) -> Result<String> {
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let sys_pid = Pid::from_u32(pid);
     if let Some(process) = sys.process(sys_pid) {
-        Ok(process.cmd().join(" "))
+        let cmdline = process.cmd()
+            .iter()
+            .map(|s| s.to_string_lossy().to_string())
+            .collect::<Vec<String>>()
+            .join(" ");
+        Ok(cmdline)
     } else {
         Err(anyhow::anyhow!("Process not found"))
     }
@@ -111,7 +117,7 @@ pub async fn kill_process_signal(pid: u32, signal: &str) -> Result<()> {
     let force = signal == "-KILL" || signal == "-9";
 
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let sys_pid = Pid::from_u32(pid);
     if let Some(process) = sys.process(sys_pid) {
@@ -134,7 +140,7 @@ pub async fn kill_process_signal(pid: u32, signal: &str) -> Result<()> {
 
 pub async fn check_process_alive(pid: u32) -> Result<bool> {
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let sys_pid = Pid::from_u32(pid);
     Ok(sys.process(sys_pid).is_some())
@@ -144,7 +150,7 @@ pub async fn get_cpu_sample(pid_list: &str) -> Result<HashMap<u32, f64>> {
     let pids: Vec<u32> = pid_list.split(',').filter_map(|s| s.parse().ok()).collect();
 
     let mut sys = System::new_all();
-    sys.refresh_processes(ProcessesToUpdate::All, true);
+    sys.refresh_processes(ProcessesToUpdate::All);
 
     let mut map = HashMap::new();
 
