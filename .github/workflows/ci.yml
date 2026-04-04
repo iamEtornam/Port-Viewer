@@ -103,18 +103,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
       
       - name: Get latest tag
         id: get_tag
         run: |
-          git fetch --tags
-          LATEST_TAG=$(git tag -l "v*" | sort -V | tail -n1)
+          git fetch origin --tags --force
+          echo "All tags on remote:"
+          git ls-remote --tags origin
+          LATEST_TAG=$(git ls-remote --tags origin | grep -oP 'refs/tags/v\K[0-9.]+' | sort -V | tail -n1)
           if [ -z "$LATEST_TAG" ]; then
             echo "No existing tags found, starting with v0.1.0"
-            LATEST_TAG="v0.0.0"
+            LATEST_TAG="0.0.0"
           fi
+          LATEST_TAG="v$LATEST_TAG"
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-          echo "Latest tag: $LATEST_TAG"
+          echo "Latest tag determined: $LATEST_TAG"
       
       - name: Determine next version
         id: next_version
@@ -149,8 +154,28 @@ jobs:
       - name: Create and push tag
         run: |
           NEW_TAG="${{ steps.next_version.outputs.new_tag }}"
+          
+          # Check if tag already exists on remote
+          if git ls-remote --tags origin | grep -q "refs/tags/$NEW_TAG"; then
+            echo "Tag $NEW_TAG already exists on remote, skipping"
+            exit 0
+          fi
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create annotated tag
           git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
+          
+          # Push tag
+          echo "Pushing tag $NEW_TAG to origin..."
           git push origin "$NEW_TAG"
-          echo "Created and pushed tag: $NEW_TAG"
+          
+          # Verify tag was pushed
+          sleep 2
+          if git ls-remote --tags origin | grep -q "refs/tags/$NEW_TAG"; then
+            echo "✓ Successfully created and pushed tag: $NEW_TAG"
+          else
+            echo "✗ Failed to push tag: $NEW_TAG"
+            exit 1
+          fi
