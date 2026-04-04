@@ -4,41 +4,58 @@ Get up and running with `port-viewer` in 5 minutes!
 
 ## Installation
 
-### Option 1: Download Pre-built Binary (Fastest)
+### Option 1: Homebrew (Recommended on macOS and Linux)
+
+```bash
+brew install iamEtornam/tap/port-viewer
+ports --version
+```
+
+Package name: `port-viewer`  
+Command name: `ports`
+
+### Option 2: Download Pre-built Binary
 
 #### macOS
 
 **Intel Mac:**
 ```bash
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-macos-x86_64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-x86_64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
 **Apple Silicon (M1/M2/M3):**
 ```bash
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-macos-aarch64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-arm64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
 #### Linux
 
 ```bash
-curl -L https://github.com/your-username/port-viewer/releases/latest/download/ports-linux-x86_64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-linux-x86_64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
 #### Windows
 
-1. Download `ports-windows-x86_64.zip` from [Releases](https://github.com/your-username/port-viewer/releases/latest)
+If the Chocolatey package has been published:
+
+```powershell
+choco install port-viewer -y
+ports --version
+```
+
+1. Download `ports-windows-x86_64.zip` from [Releases](https://github.com/iamEtornam/port-viewer/releases/latest)
 2. Extract the ZIP file
 3. Move `ports.exe` to `C:\Windows\System32\` (requires Administrator privileges)
 
-### Option 2: Build from Source
+### Option 3: Build from Source
 
 **Prerequisites:** Rust 1.70+ ([install from rust-lang.org](https://www.rust-lang.org/tools/install))
 
 ```bash
-git clone https://github.com/your-username/port-viewer
+git clone https://github.com/iamEtornam/port-viewer
 cd port-viewer
 cargo build --release
 
@@ -49,7 +66,7 @@ sudo cp target/release/ports /usr/local/bin/
 copy target\release\ports.exe C:\Windows\System32\
 ```
 
-### Option 3: Install Script (Unix only)
+### Option 4: Install Script (Unix only)
 
 ```bash
 chmod +x install.sh
@@ -230,9 +247,9 @@ ports clean
 ## Getting Help
 
 - 📖 Read the [full documentation](README.md)
-- 🐛 [Report bugs](https://github.com/your-username/port-viewer/issues/new)
-- 💡 [Request features](https://github.com/your-username/port-viewer/issues/new)
-- 💬 [Ask questions](https://github.com/your-username/port-viewer/discussions)
+- 🐛 [Report bugs](https://github.com/iamEtornam/port-viewer/issues/new)
+- 💡 [Request features](https://github.com/iamEtornam/port-viewer/issues/new)
+- 💬 [Ask questions](https://github.com/iamEtornam/port-viewer/discussions)
 
 ---
 

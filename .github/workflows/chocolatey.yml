@@ -1,0 +1,74 @@
+name: Publish Chocolatey Package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+env:
+  PACKAGE_NAME: port-viewer
+  CHOCOLATEY_PUSH_SOURCE: https://push.chocolatey.org/
+
+jobs:
+  publish-package:
+    name: Build and publish package
+    runs-on: windows-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+
+      - name: Resolve version from tag
+        shell: pwsh
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          if (-not $env:TAG_NAME.StartsWith('v')) {
+            throw "Expected a release tag starting with 'v', got: $env:TAG_NAME"
+          }
+          $version = $env:TAG_NAME.Substring(1)
+          "package_version=$version" >> $env:GITHUB_ENV
+
+      - name: Download and extract Windows binary
+        shell: pwsh
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          $zipUrl = "https://github.com/$env:REPOSITORY/releases/download/$env:TAG_NAME/ports-windows-x86_64.zip"
+          Invoke-WebRequest -Uri $zipUrl -OutFile ports-windows-x86_64.zip
+          Expand-Archive -Path ports-windows-x86_64.zip -DestinationPath extracted
+          if (-not (Test-Path "extracted\ports.exe")) {
+            throw "ports.exe not found inside the release zip"
+          }
+
+      - name: Render Chocolatey package
+        # Embeds ports.exe directly — Shimgen auto-creates the PATH shim.
+        # No install script needed per the official CLI executable guide:
+        # https://docs.chocolatey.org/en-us/guides/create/create-cli-package/
+        shell: bash
+        run: |
+          bash ./scripts/render-chocolatey-package.sh \
+            "${package_version}" \
+            "extracted/ports.exe"
+
+      - name: Pack Chocolatey package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist\chocolatey\packages | Out-Null
+          choco pack dist\chocolatey\port-viewer\port-viewer.nuspec `
+            --output-directory dist\chocolatey\packages
+
+      - name: Push to Chocolatey Community Repository
+        shell: pwsh
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CHOCOLATEY_API_KEY)) {
+            throw "Missing CHOCOLATEY_API_KEY secret. See CHOCOLATEY.md."
+          }
+          $nupkg = "dist\chocolatey\packages\$env:PACKAGE_NAME.$env:package_version.nupkg"
+          choco push $nupkg `
+            --source $env:CHOCOLATEY_PUSH_SOURCE `
+            --api-key $env:CHOCOLATEY_API_KEY
