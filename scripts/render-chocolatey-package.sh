@@ -43,10 +43,10 @@ cat > "${output_dir}/port-viewer.nuspec" <<EOF
     <owners>Etornam</owners>
     <projectUrl>https://github.com/iamEtornam/port-viewer</projectUrl>
     <packageSourceUrl>https://github.com/iamEtornam/port-viewer</packageSourceUrl>
-    <licenseUrl>https://github.com/iamEtornam/port-viewer/blob/main/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/iamEtornam/port-viewer/blob/v${version}/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/iamEtornam/port-viewer</projectSourceUrl>
-    <docsUrl>https://github.com/iamEtornam/port-viewer/blob/main/README.md</docsUrl>
+    <docsUrl>https://github.com/iamEtornam/port-viewer/blob/v${version}/README.md</docsUrl>
     <bugTrackerUrl>https://github.com/iamEtornam/port-viewer/issues</bugTrackerUrl>
     <tags>ports networking process developer-tools cli rust portable</tags>
     <summary>Inspect and manage processes listening on local ports.</summary>

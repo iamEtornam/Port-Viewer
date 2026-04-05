@@ -55,7 +55,7 @@ To compute the SHA-256 of a source tarball:
 curl -fsSL \
   https://github.com/iamEtornam/port-viewer/archive/refs/tags/<tag>.tar.gz \
   -o source.tar.gz \
-  && sha256sum source.tar.gz
+  && shasum -a 256 source.tar.gz
 ```
 
 ## Notes

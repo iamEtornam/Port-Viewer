@@ -26,10 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Single batched calls to ps and lsof
 - Runs in ~200ms or less
 
+### Added
+- Homebrew tap release automation and maintainer docs
+- Chocolatey package scaffolding and maintainer docs
+- Chocolatey publishing workflow for tagged releases
+
 ### Changed
-- Added Homebrew tap release automation and maintainer docs
-- Added Chocolatey package scaffolding and maintainer docs
-- Added Chocolatey publishing workflow for tagged releases
 - Updated install documentation to recommend Homebrew
 
 ## [0.1.0] - 2025-04-04
