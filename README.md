@@ -129,7 +129,6 @@ The install script will:
 2. Otherwise, download the latest release binary
 3. Install to `/usr/local/bin/ports`
 4. Suggest creating handy aliases
-5. Fall back to manual installation if you do not want Homebrew
 
 ### Create Handy Aliases
 

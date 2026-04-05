@@ -46,14 +46,14 @@ After this, every tagged release automatically updates the formula.
 To preview a formula locally before a release:
 
 ```bash
-./scripts/render-homebrew-formula.sh v0.2.1 <sha256>
+./scripts/render-homebrew-formula.sh <tag> <sha256>
 ```
 
 To compute the SHA-256 of a source tarball:
 
 ```bash
 curl -fsSL \
-  https://github.com/iamEtornam/port-viewer/archive/refs/tags/v0.2.1.tar.gz \
+  https://github.com/iamEtornam/port-viewer/archive/refs/tags/<tag>.tar.gz \
   -o source.tar.gz \
   && sha256sum source.tar.gz
 ```

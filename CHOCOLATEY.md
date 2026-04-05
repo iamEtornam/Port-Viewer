@@ -43,7 +43,8 @@ After approval, every subsequent release publishes automatically and
 
 ```powershell
 # 1. Download the Windows zip from a release
-$tag = "v0.2.1"
+$tag = "v0.2.1"  # Replace with the tag you want to test
+$version = $tag.Substring(1)
 Invoke-WebRequest `
   "https://github.com/iamEtornam/port-viewer/releases/download/$tag/ports-windows-x86_64.zip" `
   -OutFile ports-windows-x86_64.zip
@@ -52,7 +53,7 @@ Invoke-WebRequest `
 Expand-Archive ports-windows-x86_64.zip extracted
 
 # 3. Render the package (in Git Bash / WSL)
-bash ./scripts/render-chocolatey-package.sh 0.2.1 extracted/ports.exe
+bash ./scripts/render-chocolatey-package.sh $version extracted/ports.exe
 
 # 4. Pack
 choco pack dist\chocolatey\port-viewer\port-viewer.nuspec
