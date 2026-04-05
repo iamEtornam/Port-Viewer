@@ -1,0 +1,63 @@
+name: Update Homebrew Tap
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+env:
+  HOMEBREW_TAP_REPOSITORY: iamEtornam/homebrew-tap
+
+jobs:
+  update-tap:
+    name: Update tap formula
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+
+      - name: Download release source tarball
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          curl -L \
+            "https://github.com/${REPOSITORY}/archive/refs/tags/${TAG_NAME}.tar.gz" \
+            -o source.tar.gz
+          echo "tag_name=${TAG_NAME}" >> "$GITHUB_ENV"
+
+      - name: Calculate source checksum
+        run: |
+          sha256=$(sha256sum source.tar.gz | awk '{print $1}')
+          echo "source_sha256=${sha256}" >> "$GITHUB_ENV"
+
+      - name: Check out tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.HOMEBREW_TAP_REPOSITORY }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Render formula
+        run: |
+          mkdir -p homebrew-tap/Formula
+          ./scripts/render-homebrew-formula.sh \
+            "${tag_name}" \
+            "${source_sha256}" \
+            > homebrew-tap/Formula/port-viewer.rb
+
+      - name: Commit and push formula update
+        working-directory: homebrew-tap
+        run: |
+          if git diff --quiet; then
+            echo "No tap changes detected."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/port-viewer.rb
+          git commit -m "Update port-viewer to ${tag_name}"
+          git push origin HEAD

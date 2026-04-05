@@ -26,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Single batched calls to ps and lsof
 - Runs in ~200ms or less
 
+### Added
+- Homebrew tap release automation and maintainer docs
+- Chocolatey package scaffolding and maintainer docs
+- Chocolatey publishing workflow for tagged releases
+
+### Changed
+- Updated install documentation to recommend Homebrew
+
 ## [0.1.0] - 2025-04-04
 
 ### Added
@@ -35,5 +43,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License
 - Contributing guidelines
 
-[Unreleased]: https://github.com/yourusername/port-viewer/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/yourusername/port-viewer/releases/tag/v0.1.0
+[Unreleased]: https://github.com/iamEtornam/port-viewer/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/iamEtornam/port-viewer/releases/tag/v0.1.0

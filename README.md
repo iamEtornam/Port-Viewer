@@ -44,7 +44,30 @@
 
 ### Installation
 
-#### Pre-built Binaries (Recommended)
+#### Homebrew (Recommended)
+
+Install the `port-viewer` formula from the maintainer tap, then run the
+`ports` command:
+
+```bash
+brew install iamEtornam/tap/port-viewer
+ports --version
+```
+
+If you prefer the explicit two-step form:
+
+```bash
+brew tap iamEtornam/tap
+brew install port-viewer
+ports --version
+```
+
+Homebrew is the recommended path on macOS and Linux because updates are
+then a simple `brew upgrade port-viewer`.
+
+Maintainer setup for the tap automation lives in [HOMEBREW.md](HOMEBREW.md).
+
+#### Pre-built Binaries
 
 Download the latest release for your platform from the [Releases](https://github.com/iamEtornam/port-viewer/releases) page:
 
@@ -55,7 +78,7 @@ curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports
 sudo mv ports /usr/local/bin/
 
 # Apple Silicon
-curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-aarch64.tar.gz | tar xz
+curl -L https://github.com/iamEtornam/port-viewer/releases/latest/download/ports-macos-arm64.tar.gz | tar xz
 sudo mv ports /usr/local/bin/
 ```
 
@@ -67,9 +90,15 @@ sudo mv ports /usr/local/bin/
 
 **Windows:**
 ```powershell
+# After the Chocolatey package is published
+choco install port-viewer -y
+ports --version
+
 # Download ports-windows-x86_64.zip from releases
 # Extract and move ports.exe to C:\Windows\System32\
 ```
+
+Chocolatey package maintainer setup lives in [CHOCOLATEY.md](CHOCOLATEY.md).
 
 #### From Source
 

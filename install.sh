@@ -55,7 +55,7 @@ if command -v cargo &> /dev/null; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
         echo -e "${BLUE}Installing from source...${NC}"
-        cargo install --git https://github.com/yourusername/port-viewer
+        cargo install --git https://github.com/iamEtornam/port-viewer
         echo -e "${GREEN}✓ Installation complete!${NC}"
         echo ""
         echo "Run 'ports --help' to get started"
@@ -66,7 +66,7 @@ fi
 # Install from binary
 echo -e "${BLUE}Installing binary...${NC}"
 
-LATEST_RELEASE=$(curl -s https://api.github.com/repos/yourusername/port-viewer/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/iamEtornam/port-viewer/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
 if [ -z "$LATEST_RELEASE" ]; then
     echo -e "${RED}Failed to fetch latest release${NC}"
@@ -75,7 +75,7 @@ fi
 
 echo -e "Latest version: ${GREEN}$LATEST_RELEASE${NC}"
 
-DOWNLOAD_URL="https://github.com/yourusername/port-viewer/releases/download/$LATEST_RELEASE/$BINARY_NAME.tar.gz"
+DOWNLOAD_URL="https://github.com/iamEtornam/port-viewer/releases/download/$LATEST_RELEASE/$BINARY_NAME.tar.gz"
 
 # Download and extract
 TEMP_DIR=$(mktemp -d)
