@@ -48,9 +48,11 @@ jobs:
         # No install script needed per the official CLI executable guide:
         # https://docs.chocolatey.org/en-us/guides/create/create-cli-package/
         shell: bash
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           bash ./scripts/render-chocolatey-package.sh \
-            "${package_version}" \
+            "${TAG_NAME}" \
             "extracted/ports.exe"
 
       - name: Pack Chocolatey package

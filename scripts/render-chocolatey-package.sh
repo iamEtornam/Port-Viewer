@@ -9,15 +9,21 @@
 # tool automatically creates a PATH shim — no install script required.
 #
 # Usage: render-chocolatey-package.sh <version> <path-to-ports.exe> [output_dir]
+#
+# <version> may be supplied with or without a leading 'v' (e.g. 0.2.1 or v0.2.1).
 
 set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 if [[ $# -lt 2 || $# -gt 3 ]]; then
   echo "Usage: $0 <version> <path-to-ports.exe> [output_dir]" >&2
   exit 1
 fi
 
-version="$1"
+tag="$1"
+version="${tag#v}"   # strip leading 'v' if present; Chocolatey versions must not have it
 ports_exe="$2"
 output_dir="${3:-dist/chocolatey/port-viewer}"
 tools_dir="${output_dir}/tools"
@@ -30,7 +36,7 @@ fi
 mkdir -p "$tools_dir"
 
 cp "$ports_exe" "${tools_dir}/ports.exe"
-cp LICENSE "${tools_dir}/LICENSE.txt"
+cp "${REPO_ROOT}/LICENSE" "${tools_dir}/LICENSE.txt"
 
 cat > "${output_dir}/port-viewer.nuspec" <<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -53,7 +59,7 @@ cat > "${output_dir}/port-viewer.nuspec" <<EOF
     <description>A fast, beautiful CLI for inspecting and managing processes listening on
 your machine's ports. Detects frameworks, maps Docker ports, shows CPU and memory
 usage, and lets you interactively kill processes. Command: ports</description>
-    <releaseNotes>https://github.com/iamEtornam/port-viewer/releases/tag/v${version}</releaseNotes>
+    <releaseNotes>https://github.com/iamEtornam/port-viewer/releases/tag/${tag}</releaseNotes>
   </metadata>
   <files>
     <file src="tools\ports.exe" target="tools\ports.exe" />
