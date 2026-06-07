@@ -201,7 +201,10 @@ jobs:
         with:
           tag_name: ${{ needs.create-tag.outputs.new_tag }}
           name: Release ${{ needs.create-tag.outputs.new_tag }}
-          draft: false
+          # Created as a draft so the `release: published` event (which fans out
+          # to the Homebrew/Chocolatey workflows) does not fire until every
+          # platform asset has been uploaded. The publish-release job un-drafts it.
+          draft: true
           prerelease: false
           generate_release_notes: true
         env:
@@ -263,14 +266,34 @@ jobs:
         with:
           tag_name: ${{ needs.create-tag.outputs.new_tag }}
           files: ${{ matrix.artifact }}.tar.gz
+          # Keep the release drafted; otherwise this update would un-draft it
+          # mid-upload and publish before the other platforms' assets land.
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Upload Release Asset (Windows)
         if: matrix.os == 'windows-latest'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.create-tag.outputs.new_tag }}
           files: ${{ matrix.artifact }}.zip
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [create-tag, upload-release-assets]
+    runs-on: ubuntu-latest
+    if: needs.create-tag.outputs.tag_created == 'true'
+    steps:
+      # All assets are uploaded by now. Flipping draft -> published fires the
+      # single `release: published` event the packaging workflows wait on.
+      - name: Publish release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.create-tag.outputs.new_tag }}
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
